@@ -328,7 +328,7 @@
 
                 if (answerItem[j].like > 2)
                  {
-                    Event.Trigger("transfer", {
+                    Event.Trigger("ChallengeValut", {
                         Transfer: {
                             from: Blockchain.transaction.from,
                             to: answerItem[j].answered,
@@ -346,7 +346,7 @@
             var author = this.ChallengeValut.get(challengeId).author;
 
             if (answerItem.length > 2){
-                Event.Trigger("transfer", {
+                Event.Trigger("ChallengeValut", {
                     Transfer: {
                         from: Blockchain.transaction.from,
                         to: author,
