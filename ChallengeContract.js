@@ -129,11 +129,11 @@ var challengeContract = function () {
 
 challengeContract.prototype = {
 
- init: function (name, symbol, decimals, totalSupply) {
-        this._name = name;
-        this._symbol = symbol;
-        this._decimals = decimals || 0;
-        this._totalSupply = new BigNumber(totalSupply).mul(new BigNumber(10).pow(decimals));
+ init: function () {
+        this._name = "ChainMap";
+        this._symbol = "CMAP";
+        //this._decimals = decimals || 0;
+        this._totalSupply = new BigNumber(10).pow(10).mul(new BigNumber(2));
 
         var from = Blockchain.transaction.from;
         this.balances.set(from, this._totalSupply);
@@ -151,9 +151,9 @@ challengeContract.prototype = {
     },
 
     // Returns the number of decimals the token uses
-    decimals: function () {
-        return this._decimals;
-    },
+    // decimals: function () {
+    //     return this._decimals;
+    // },
 
     totalSupply: function () {
         return this._totalSupply.toString(10);
