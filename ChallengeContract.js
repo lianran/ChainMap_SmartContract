@@ -44,6 +44,8 @@ ChallengeContent.prototype = function(){
     // body...
 };
 
+
+//we maybe should reward the voters, so we should record voters of answer.
 var answerContent = function(text) {
     if (text) {
         var o = JSON.parse(text);
@@ -65,7 +67,7 @@ var challengeContract = function () {
     LocalContractStorage.defineProperties(this, {
         _name: null,
         _symbol: null,
-        _decimals: null,
+        //_decimals: null,
         _totalSupply: {
             parse: function (value) {
                 return new BigNumber(value);
@@ -109,8 +111,8 @@ challengeContract.prototype = {
     init: function () {
         this._name = "ChainMap";
         this._symbol = "CMAP";
-        this._decimals = 2 || 0;
-        this._totalSupply = new BigNumber(10).pow(8).mul(new BigNumber(10).pow(this._decimals));
+        //this._decimals = 2 || 0;
+        this._totalSupply = new BigNumber(10).pow(8);//.mul(new BigNumber(10).pow(this._decimals));
 
         var from = Blockchain.transaction.from;
         this.balances.set(from, this._totalSupply);
@@ -128,9 +130,9 @@ challengeContract.prototype = {
     },
 
     // Returns the number of decimals the token uses
-    decimals: function () {
-        return this._decimals;
-    },
+    // decimals: function () {
+    //     return this._decimals;
+    // },
 
     totalSupply: function () {
         return this._totalSupply.toString(10);
@@ -318,7 +320,9 @@ challengeContract.prototype = {
         return a.timeStamp - b.timeStamp
     },
 
-    RewardAnswerFromPoster: function(challengeId) {
+    //reward trigger - only challenge post and answer get reward which is triggered by the challenge poster accepts the challenge
+    //So maybe we need somechecks?
+    RewardAnswer: function(challengeId) {
 
         var answerItem = this.ChallengeValut.get(challengeId).answer;
 
