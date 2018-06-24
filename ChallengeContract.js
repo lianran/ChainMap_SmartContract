@@ -87,7 +87,7 @@ var challengeContract = function () {
     LocalContractStorage.defineProperties(this, {
         _name: null,
         _symbol: null,
-        _decimals: null,
+        //_decimals: null,
         _admin: "n1WJaKuQ8vQ8AzoGBZfYH3GLGzULQ2WwJvp",
         _totalSupply: {
             parse: function (value) {
@@ -358,6 +358,7 @@ challengeContract.prototype = {
             }
         });
     },
+    // this func can be only called once, so maybe need some checks?
     RewardAll: function (challengeId) {
 
         var from = Blockchain.transaction.from;
