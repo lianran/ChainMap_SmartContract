@@ -110,7 +110,7 @@ challengeContract.prototype = {
         this._name = "ChainMap";
         this._symbol = "CMAP";
         this._decimals = 2 || 0;
-        this._totalSupply = new BigNumber(10).pow(8).mul(new BigNumber(10).pow(decimals));
+        this._totalSupply = new BigNumber(10).pow(8).mul(new BigNumber(10).pow(this._decimals));
 
         var from = Blockchain.transaction.from;
         this.balances.set(from, this._totalSupply);
