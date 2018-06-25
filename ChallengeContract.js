@@ -1,10 +1,10 @@
 'use strict';
 //Global define
-var Diamond = new BigNumber(20);
-var Gold = new BigNumber(10);
-var Silver = new BigNumber(3);
-var Brozen = new  BigNumber(1);
-var blockLimit = new BigNumber(10);
+// var Diamond = new BigNumber(200);
+// var Gold = new BigNumber(100);
+// var Silver = new BigNumber(50);
+// var Brozen = new  BigNumber(25);
+// var blockLimit = new BigNumber(10);
 
 var Allowed = function (obj) {
     this.allowed = {};
@@ -24,7 +24,6 @@ Allowed.prototype = {
             }
         }
     },
-
     get: function (key) {
         return this.allowed[key];
     },
@@ -72,18 +71,6 @@ answerContent.prototype = function(){
     // body...
 };
 
-// var chooseContent = function (text) {
-//     if (text){
-//         var o = JSON.parse(text);
-//         this.amount = new BigNumber(o.amount);
-//         this.chooser = o.chooser.toString();
-//     }
-// };
-//
-// chooseContent.prototype=function(){
-//
-// };
-
 var challengeContract = function () {
     LocalContractStorage.defineProperties(this, {
         _name: null,
@@ -97,7 +84,15 @@ var challengeContract = function () {
             stringify: function (o) {
                 return o.toString(10);
             }
-        }
+        },
+        Diamond: new BigNumber(200),
+        Gold: new BigNumber(100),
+        Silver: new BigNumber(50),
+        Brozen: new  BigNumber(25),
+        blockLimit: new BigNumber(10),
+        currentBlock: new BigNumber(0),
+        changePoint: new BigNumber(20),
+        reward: new BigNumber(0)
     });
 
     LocalContractStorage.defineMapProperties(this, {
@@ -135,10 +130,15 @@ challengeContract.prototype = {
         this._symbol = "CMAP";
         //this._decimals = decimals || 0;
         this._totalSupply = new BigNumber(10).pow(10).mul(new BigNumber(2));
-
+        this.reward = Math.ceil(this._totalSupply/2);
         var from = Blockchain.transaction.from;
         this.balances.set(from, this._totalSupply);
         this.transferEvent(true, from, from, this._totalSupply);
+        this.Diamond = new BigNumber(200);
+        this.Gold = new BigNumber(100);
+        this.Silver = new BigNumber(50);
+        this.Brozen = new  BigNumber(25);
+        this.blockLimit = new BigNumber(10);
     },
 
     // Returns the name of the token
@@ -213,6 +213,16 @@ challengeContract.prototype = {
         } else {
             throw new Error("transfer failed.");
         }
+    },
+
+    _poolTransfer: function (_to,_value) {
+        if (this.reward < _value){
+            throw new Error("Run out of Token")
+        }
+        var toBalance = this.balances.get(_to) || new BigNumber(0);
+        this.balances.set(_to, toBalance.add(_value));
+        this.balances = this.balances.sub(_value);
+
     },
 
     transferEvent: function (status, from, to, value) {
@@ -361,13 +371,12 @@ challengeContract.prototype = {
                 return -1;
         }
     },
-    tokenTansfer:function (_from,_to, _value) {
+    tokenTansfer:function (_to, _value) {
 
-        this.ChallengeValut.transferFrom(_from,_to,_value);
+        this.ChallengeValut._poolTransfer(_to,_value);
 
         Event.Trigger("ChallengeValut", {
             Transfer: {
-                from: _from,
                 to: _to,
                 value: _value
             }
@@ -393,18 +402,32 @@ challengeContract.prototype = {
         if (answerItem.length === 0){
             throw new Error("No answer");
         }
+
+        if (this.currentBlock !== 0){
+            var multiple = Math.ceil((Blockchain.block.height - this.currentBlock)/this.changePoint);
+            if (multiple !== 0)
+            {
+                var base = 2*multiple;
+                this.Diamond = Math.ceil(this.Diamond/base);
+                this.Gold = Math.ceil(this.Gold/base);
+                this.Silver = Math.ceil(this.Silver/base);
+                this.Brozen = Math.ceil(this.Brozen/base);
+            }
+
+        }
+        
         if (limit > blockLimit) {
             if (challengeItem.challengeLevel === "Diamond") {
-                rewardAmount = Diamond;
+                rewardAmount = this.Diamond;
             }
             else if (challengeItem.challengeLevel === "Gold"){
-                rewardAmount = Gold;
+                rewardAmount = this.Gold;
             }
             else if (challengeItem.challengeLevel === "Silver"){
-                rewardAmount = Silver;
+                rewardAmount = this.Silver;
             }
             else if (challengeItem.challengeLevel === "Brozen"){
-                rewardAmount = Brozen;
+                rewardAmount = this.Brozen;
             }
             var firstLevel = Math.ceil(rewardAmount*0.25);
             var secondLevel = Math.ceil(rewardAmount*0.15);
@@ -426,7 +449,7 @@ challengeContract.prototype = {
                 var to_1 = answerItem[j_1].answered;
                 var from_1 = this._admin;
                 var amount_1 = Math.ceil(firstLevel/firstSize);
-                this.tokenTansfer(from_1,to_1,amount_1);
+                this.tokenTansfer(to_1,amount_1);
             }
 
             for (var j_2 = 0; j_2 < secondSize; j_2++){
@@ -434,7 +457,7 @@ challengeContract.prototype = {
                 var to_2 = answerItem[base_2].answered;
                 var from_2 = this._admin;
                 var amount_2 = Math.ceil(secondLevel/secondSize);
-                this.tokenTansfer(from_2,to_2,amount_2);
+                this.tokenTansfer(to_2,amount_2);
             }
 
             for (var j_3 = 0; j_3<thirdSize; j_3++) {
@@ -442,7 +465,7 @@ challengeContract.prototype = {
                 var to_3 = answerItem[base_3].answered;
                 var from_3 = this._admin;
                 var amount_3 = Math.ceil(thirdLevel/thirdSize);
-                this.tokenTansfer(from_3,to_3,amount_3);
+                this.tokenTansfer(to_3,amount_3);
             }
 
             var forthSize = new BigNumber(0);
@@ -457,20 +480,21 @@ challengeContract.prototype = {
                 for (var i = 0; i<answerItem[j_5].like.length;i++){
                     var like_to = answerItem[j_5].like[i];
                     var like_from = this._admin;
-                    this.tokenTansfer(like_from,like_to,forthAmount);
+                    this.tokenTansfer(like_to,forthAmount);
                 }
 
                 for (var k =0; k<answerItem[j_5].dislike.length;k++) {
                     var dislike_to = answerItem[j_5].dislike[i];
                     var dislike_from = this._admin;
-                    this.tokenTansfer(dislike_from,dislike_to,forthAmount);
+                    this.tokenTansfer(dislike_to,forthAmount);
                 }
 
             }
 
-            this.tokenTansfer(this._admin,challengeItem.author,forthAmount);
+            this.tokenTansfer(challengeItem.author,forthAmount);
 
             challengeItem.reward = true;
+            this.currentBlock = Blockchain.block.height;
 
         }
         else {
