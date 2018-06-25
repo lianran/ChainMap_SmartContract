@@ -281,7 +281,7 @@ challengeContract.prototype = {
         challengeItem.challenge = challenge;
         challengeItem.timeEstimation = timeEstimation;
         challengeItem.author = from;
-        challengeItem.timeStamp = new Date();
+        challengeItem.timeStamp = new Date(); // Not right maybe
         challengeItem.blockHeight = Blockchain.block.height;
 
         this.ChallengeValut.put(challengeId,challengeItem);
@@ -298,7 +298,7 @@ challengeContract.prototype = {
         answerItem.answerId = answerId;
         answerItem.answer = answer;
         answerItem.answered = from;
-        answerItem.timeStamp = new Date();
+        answerItem.timeStamp = new Date(); // Not right maybe
         answerItem.blockHeight = Blockchain.block.blockHeight;
 
         //challengeItem.answer.push(answerItem);
@@ -319,6 +319,7 @@ challengeContract.prototype = {
 
         var answerItem = this.ChallengeValut.get(challengeId).answer;
 
+        // check if the voter is here??? or maybe we can use different type for like and dislike, for example 'set' Not array?
         for(var j = 0, length2 = answerItem.length; j < length2; j++){
 
             if (answerItem[j].answerId === answerId){
@@ -358,7 +359,7 @@ challengeContract.prototype = {
             }
         });
     },
-    // this func can be only called once, so maybe need some checks?
+    // this func can be only called once, so maybe need some checks and define a var in the challenge?
     RewardAll: function (challengeId) {
 
         var from = Blockchain.transaction.from;
