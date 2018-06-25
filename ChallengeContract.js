@@ -43,6 +43,7 @@ var ChallengeContent = function(text) {
          this.author = o.author.toString();
          this.timeStamp = o.timeStamp.toString();
          this.blockHeight = new BigNumber(o.blockHeight);
+         this.reward = false;
          this.answer = new Array();
     }
 };
@@ -281,7 +282,8 @@ challengeContract.prototype = {
         challengeItem.challenge = challenge;
         challengeItem.timeEstimation = timeEstimation;
         challengeItem.author = from;
-        challengeItem.timeStamp = new Date(); // Not right maybe
+        //challengeItem.timeStamp = new Date(); // Not right maybe
+        challengeItem.timeStamp = Blockchain.block.timeStamp;
         challengeItem.blockHeight = Blockchain.block.height;
 
         this.ChallengeValut.put(challengeId,challengeItem);
@@ -298,7 +300,8 @@ challengeContract.prototype = {
         answerItem.answerId = answerId;
         answerItem.answer = answer;
         answerItem.answered = from;
-        answerItem.timeStamp = new Date(); // Not right maybe
+      //  answerItem.timeStamp = new Date(); // Not right maybe
+        answerItem.timeStamp = Blockchain.block.timeStamp;
         answerItem.blockHeight = Blockchain.block.blockHeight;
 
         //challengeItem.answer.push(answerItem);
@@ -314,7 +317,6 @@ challengeContract.prototype = {
     VoteAnswer: function(challengeId,answerId,result){
 
         var voter = Blockchain.transaction.from;
-
         var choose = result.toString();
 
         var answerItem = this.ChallengeValut.get(challengeId).answer;
@@ -324,6 +326,18 @@ challengeContract.prototype = {
 
             if (answerItem[j].answerId === answerId){
 
+                for(var i = 0, length3 = answerItem[j].like.length; i < length3; i++){
+                    if(answerItem[j].like[i] === voter) {
+                        throw new Error("Only vote one answer once");
+                    }
+                }
+
+                for(var k= 0, length4 = answerItem[j].dislike.length; k < length4; k++){
+                    if (answerItem[j].dislike[k] === voter) {
+                        throw new Error("Only vote onr answer once");
+                    }
+
+                }
                 if (choose){
                     //answerItem[j].like = answerItem[j].like + 1;
 
@@ -370,6 +384,9 @@ challengeContract.prototype = {
 
         answerItem.sort(this.ChallengeValut.sortLike);
 
+        if (challengeItem.reward){
+            throw new Error("Reward only once");
+        }
         if (from !== challengeItem.author) {
             throw new Error("Only for challenge developer");
         }
@@ -452,6 +469,8 @@ challengeContract.prototype = {
             }
 
             this.tokenTansfer(this._admin,challengeItem.author,forthAmount);
+
+            challengeItem.reward = true;
 
         }
         else {
