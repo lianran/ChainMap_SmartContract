@@ -132,6 +132,7 @@ challengeContract.prototype = {
         this._totalSupply = new BigNumber(10).pow(10).mul(new BigNumber(2));
         this.reward = Math.ceil(this._totalSupply/2);
         var from = Blockchain.transaction.from;
+        //so the use the _admin, not the from! Another thing: not _totalSupply, it should be div 2.
         this.balances.set(from, this._totalSupply);
         this.transferEvent(true, from, from, this._totalSupply);
         this.Diamond = new BigNumber(200);
@@ -221,6 +222,7 @@ challengeContract.prototype = {
         }
         var toBalance = this.balances.get(_to) || new BigNumber(0);
         this.balances.set(_to, toBalance.add(_value));
+        //what's this??? sub from reward!.
         this.balances = this.balances.sub(_value);
 
     },
@@ -371,6 +373,8 @@ challengeContract.prototype = {
                 return -1;
         }
     },
+
+    //everyone  can call this func!!!!
     tokenTansfer:function (_to, _value) {
 
         this.ChallengeValut._poolTransfer(_to,_value);
@@ -382,7 +386,7 @@ challengeContract.prototype = {
             }
         });
     },
-    // this func can be only called once, so maybe need some checks and define a var in the challenge?
+    
     RewardAll: function (challengeId) {
 
         var from = Blockchain.transaction.from;
