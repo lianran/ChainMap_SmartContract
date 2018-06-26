@@ -133,8 +133,8 @@ challengeContract.prototype = {
         this.reward = Math.ceil(this._totalSupply/2);
         var from = Blockchain.transaction.from;
         //so the use the _admin, not the from! Another thing: not _totalSupply, it should be div 2.
-        this.balances.set(from, this._totalSupply);
-        this.transferEvent(true, from, from, this._totalSupply);
+        this.balances.set(from, this._totalSupply - this.reward);
+        this.transferEvent(true, from, from, this._totalSupply - this.reward);
         this.Diamond = new BigNumber(200);
         this.Gold = new BigNumber(100);
         this.Silver = new BigNumber(50);
@@ -223,7 +223,8 @@ challengeContract.prototype = {
         var toBalance = this.balances.get(_to) || new BigNumber(0);
         this.balances.set(_to, toBalance.add(_value));
         //what's this??? sub from reward!.
-        this.balances = this.balances.sub(_value);
+        //this.balances = this.balances.sub(_value);
+        this.reward = this.reward.sub(_value);
 
     },
 
@@ -375,7 +376,7 @@ challengeContract.prototype = {
     },
 
     //everyone  can call this func!!!!
-    tokenTansfer:function (_to, _value) {
+    _tokenTansfer:function (_to, _value) {
 
         this.ChallengeValut._poolTransfer(_to,_value);
 
@@ -453,7 +454,7 @@ challengeContract.prototype = {
                 var to_1 = answerItem[j_1].answered;
                 var from_1 = this._admin;
                 var amount_1 = Math.ceil(firstLevel/firstSize);
-                this.tokenTansfer(to_1,amount_1);
+                this._tokenTansfer(to_1,amount_1);
             }
 
             for (var j_2 = 0; j_2 < secondSize; j_2++){
@@ -461,7 +462,7 @@ challengeContract.prototype = {
                 var to_2 = answerItem[base_2].answered;
                 var from_2 = this._admin;
                 var amount_2 = Math.ceil(secondLevel/secondSize);
-                this.tokenTansfer(to_2,amount_2);
+                this._tokenTansfer(to_2,amount_2);
             }
 
             for (var j_3 = 0; j_3<thirdSize; j_3++) {
@@ -469,7 +470,7 @@ challengeContract.prototype = {
                 var to_3 = answerItem[base_3].answered;
                 var from_3 = this._admin;
                 var amount_3 = Math.ceil(thirdLevel/thirdSize);
-                this.tokenTansfer(to_3,amount_3);
+                this._tokenTansfer(to_3,amount_3);
             }
 
             var forthSize = new BigNumber(0);
@@ -484,18 +485,18 @@ challengeContract.prototype = {
                 for (var i = 0; i<answerItem[j_5].like.length;i++){
                     var like_to = answerItem[j_5].like[i];
                     var like_from = this._admin;
-                    this.tokenTansfer(like_to,forthAmount);
+                    this._tokenTansfer(like_to,forthAmount);
                 }
 
                 for (var k =0; k<answerItem[j_5].dislike.length;k++) {
                     var dislike_to = answerItem[j_5].dislike[i];
                     var dislike_from = this._admin;
-                    this.tokenTansfer(dislike_to,forthAmount);
+                    this._tokenTansfer(dislike_to,forthAmount);
                 }
 
             }
 
-            this.tokenTansfer(challengeItem.author,forthAmount);
+            this._tokenTansfer(challengeItem.author,forthAmount);
 
             challengeItem.reward = true;
             this.currentBlock = Blockchain.block.height;
@@ -559,4 +560,6 @@ challengeContract.prototype = {
 };
 
 module.exports = challengeContract;
+
+// wheather the BigNumber can use +-*/????
 
