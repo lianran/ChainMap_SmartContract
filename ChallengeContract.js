@@ -43,7 +43,7 @@ var ChallengeContent = function(text) {
          this.timeStamp = o.timeStamp.toString();
          this.blockHeight = new BigNumber(o.blockHeight);
          this.reward = false;
-         this.answer = new Array();
+         this.answer = [];
     } else {
          this.challengeLevel = new BigNumber(0);
          this.challenge = "null";
@@ -52,7 +52,7 @@ var ChallengeContent = function(text) {
          this.timeStamp = "null";
          this.blockHeight = new BigNumber(0);
          this.reward = false;
-         this.answer = new Array();
+         this.answer = [];
     }
 };
 
@@ -71,16 +71,16 @@ var answerContent = function(text) {
         this.answered = o.answered.toString();
         this.timeStamp = o.timeStamp.toString();
         this.blockHeight = new BigNumber(o.blockHeight);
-        this.like = new Array();
-        this.dislike = new Array();
+        this.like = [];
+        this.dislike = [];
     } else {
         this.answerId = new BigNumber(0);
         this.answer = "null";
         this.answered = "null";
         this.timeStamp = "null";
         this.blockHeight = new BigNumber(0);
-        this.like = new Array();
-        this.dislike = new Array();
+        this.like = [];
+        this.dislike = [];
 
     }
 };
@@ -331,13 +331,14 @@ challengeContract.prototype = {
         answerItem.answerId = answerId;
         answerItem.answer = answer;
         answerItem.answered = from;
-      //  answerItem.timeStamp = new Date(); // Not right maybe
+        //answerItem.timeStamp = new Date(); // Not right maybe
         answerItem.timeStamp = Blockchain.block.timeStamp;
         answerItem.blockHeight = Blockchain.block.blockHeight;
 
-        //challengeItem.answer.push(answerItem);
+        challengeItem.answer.push(answerItem);
 
-        this.ChallengeValut.put(challengeId, challengeItem.answer.push(answerItem));
+        this.ChallengeValut.put(challengeId, challengeItem);
+        return this.ChallengeValut.get(challengeId);
     },
 
     GetChallenge: function(challengeId){
