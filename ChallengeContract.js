@@ -131,10 +131,9 @@ challengeContract.prototype = {
         //this._decimals = decimals || 0;
         this._totalSupply = new BigNumber(10).pow(10).mul(new BigNumber(2));
         this.reward = Math.ceil(this._totalSupply/2);
-        var from = Blockchain.transaction.from;
         //so the use the _admin, not the from! Another thing: not _totalSupply, it should be div 2.
-        this.balances.set(from, this._totalSupply - this.reward);
-        this.transferEvent(true, from, from, this._totalSupply - this.reward);
+        this.balances.set(this._admin, this._totalSupply - this.reward);
+        this.transferEvent(true, this._admin, this._admin, this._totalSupply - this.reward);
         this.Diamond = new BigNumber(200);
         this.Gold = new BigNumber(100);
         this.Silver = new BigNumber(50);
