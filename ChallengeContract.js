@@ -44,10 +44,22 @@ var ChallengeContent = function(text) {
          this.blockHeight = new BigNumber(o.blockHeight);
          this.reward = false;
          this.answer = new Array();
+    } else {
+         this.challengeLevel = new BigNumber(0);
+         this.challenge = "null";
+         this.timeEstimation = "null";
+         this.author = "null";
+         this.timeStamp = "null";
+         this.blockHeight = new BigNumber(0);
+         this.reward = false;
+         this.answer = new Array();
     }
 };
 
-ChallengeContent.prototype = function(){
+ChallengeContent.prototype = {
+    toString: function (){
+        return JSON.stringify(this)
+    }
     // body...
 };
 
@@ -61,13 +73,22 @@ var answerContent = function(text) {
         this.blockHeight = new BigNumber(o.blockHeight);
         this.like = new Array();
         this.dislike = new Array();
-    }
-    else {
+    } else {
+        this.answerId = new BigNumber(0);
+        this.answer = "null";
+        this.answered = "null";
+        this.timeStamp = "null";
+        this.blockHeight = new BigNumber(0);
+        this.like = new Array();
+        this.dislike = new Array();
 
     }
 };
 
-answerContent.prototype = function(){
+answerContent.prototype = {
+    // toString: function (){
+    //     return JSON.stringify(this)
+    // }
     // body...
 };
 
@@ -76,7 +97,7 @@ var challengeContract = function () {
         _name: null,
         _symbol: null,
         //_decimals: null,
-        _admin: "n1WJaKuQ8vQ8AzoGBZfYH3GLGzULQ2WwJvp",
+        _admin: null,
         _totalSupply: {
             parse: function (value) {
                 return new BigNumber(value);
@@ -113,13 +134,7 @@ var challengeContract = function () {
             }
         },
         "ChallengeValut": {
-            parse: function(text) {
-                return new ChallengeContent(text);
-            },
-            stringify: function(o){
-                return o.toString();
-            }
-        }
+        },
     });
 };
 
@@ -131,9 +146,10 @@ challengeContract.prototype = {
         //this._decimals = decimals || 0;
         this._totalSupply = new BigNumber(10).pow(10).mul(new BigNumber(2));
         this.reward = Math.ceil(this._totalSupply/2);
-        //so the use the _admin, not the from! Another thing: not _totalSupply, it should be div 2.
-        this.balances.set(this._admin, this._totalSupply - this.reward);
-        this.transferEvent(true, this._admin, this._admin, this._totalSupply - this.reward);
+        //this._admin = "n1WJaKuQ8vQ8AzoGBZfYH3GLGzULQ2WwJvp";
+        this._admin = "n1ZuhVMZPJGQ2dt26WT4LxzJMiU7xbjTv5Z";
+        this.balances.set(this._admin, this._totalSupply.sub(this.reward));
+        this.transferEvent(true, this._admin, this._admin, this._totalSupply.sub(this.reward));
         this.Diamond = new BigNumber(200);
         this.Gold = new BigNumber(100);
         this.Silver = new BigNumber(50);
@@ -299,6 +315,9 @@ challengeContract.prototype = {
         challengeItem.blockHeight = Blockchain.block.height;
 
         this.ChallengeValut.put(challengeId,challengeItem);
+
+        //this.my.put(challengeId, challengeLevel);
+        return this.ChallengeValut.get(challengeId);
     },
 
     AnswerChallenge: function(challengeId, answerId, answer){
@@ -386,7 +405,7 @@ challengeContract.prototype = {
             }
         });
     },
-    
+
     RewardAll: function (challengeId) {
 
         var from = Blockchain.transaction.from;
