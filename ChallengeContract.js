@@ -354,7 +354,8 @@ challengeContract.prototype = {
         var voter = address;
         var choose = result;
 
-        var answerItem = this.ChallengeValut.get(challengeId).answer;
+        var challengeItem = this.ChallengeValut.get(challengeId);
+        var answerItem = challengeItem.answer;
 
         // check if the voter is here??? or maybe we can use different type for like and dislike, for example 'set' Not array?
         for(var j = 0, length2 = answerItem.length; j < length2; j++){
@@ -375,17 +376,20 @@ challengeContract.prototype = {
                 }
                 if (choose){
                     //answerItem[j].like = answerItem[j].like + 1;
-
-                    this.ChallengeValut.put(challengeId,answerItem[j].like.push(voter));
+                    answerItem[j].like.push(voter);
+                    //challengeItem.answer = answerItem;
+                    this.ChallengeValut.put(challengeId,challengeItem);
                 }
                 else {
-
-                    this.ChallengeValut.put(challengeId,answerItem[j].dislike.push(voter));
+                    answerItem[j].like.push(voter);
+                    //challengeItem.answer = answerItem;
+                    this.ChallengeValut.put(challengeId,challengeItem);
                 }
 
                 break;
             }
         }
+        return this.ChallengeValut.get(challengeId);
 
     },
     sortLike: function(a,b){
