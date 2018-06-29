@@ -10,7 +10,7 @@ Smart contract for [ChainDev Market Place](https://github.com/chainmaporg/cmp) d
 
 Post a challenge on the blockchain. [More details](https://github.com/chainmaporg/cmp/wiki/UI-flow#10-user-posts-a-challenge).
 
-* Parameters: challengeId, challengeLevel, challenge, timeEstimation
+* Parameters: address, challengeId, challengeLevel, challenge, timeEstimation
 * Return: null
 
 
@@ -18,7 +18,7 @@ Post a challenge on the blockchain. [More details](https://github.com/chainmapor
 
 Save an answer on the blockchain.[More details](https://github.com/chainmaporg/cmp/wiki/UI-flow#11-any-user-answer-the-posted-challenge).
 
-* Parameters: challengeId, answerId, answer
+* Parameters: address, challengeId, answerId, answer
 * Return: null
 
 
@@ -33,7 +33,7 @@ Get the information about a challenge from blockchain.
 
 Vote answer on the blcokchain. [More details](https://github.com/chainmaporg/cmp/wiki/UI-flow#12-community-users-vote-the-answer-of-the-posted-challenge).
 
-* Parameters: challengeId, answerId, result
+* Parameters: address, challengeId, answerId, result
 * Return: null
 
 ##### RewardAll
