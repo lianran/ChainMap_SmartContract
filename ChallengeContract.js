@@ -427,9 +427,9 @@ challengeContract.prototype = {
         if (challengeItem.reward){
             throw new Error("Reward only once");
         }
-        if (from !== challengeItem.author) {
-            throw new Error("Only for challenge developer");
-        }
+        // if (from !== challengeItem.author) {
+        //     throw new Error("Only for challenge developer");
+        // }
         if (answerItem.length === 0){
             throw new Error("No answer");
         }
