@@ -38,12 +38,12 @@ var ChallengeContent = function(text) {
          var o = JSON.parse(text);
          this.challengeLevel = new BigNumber(o.challengeLevel);
          this.challenge = o.challenge.toString();
-         this.timeEstimation = o.timeEstimation.tostring();
+         this.timeEstimation = o.timeEstimation.toString();
          this.author = o.author.toString();
          this.timeStamp = o.timeStamp.toString();
          this.blockHeight = new BigNumber(o.blockHeight);
          this.reward = false;
-         this.answer = [];
+         this.answer = new Array();
     } else {
          this.challengeLevel = new BigNumber(0);
          this.challenge = "null";
@@ -52,7 +52,7 @@ var ChallengeContent = function(text) {
          this.timeStamp = "null";
          this.blockHeight = new BigNumber(0);
          this.reward = false;
-         this.answer = [];
+         this.answer = new Array();
     }
 };
 
@@ -71,16 +71,16 @@ var answerContent = function(text) {
         this.answered = o.answered.toString();
         this.timeStamp = o.timeStamp.toString();
         this.blockHeight = new BigNumber(o.blockHeight);
-        this.like = [];
-        this.dislike = [];
+        this.like = new Array();
+        this.dislike = new Array();
     } else {
         this.answerId = new BigNumber(0);
         this.answer = "null";
         this.answered = "null";
         this.timeStamp = "null";
         this.blockHeight = new BigNumber(0);
-        this.like = [];
-        this.dislike = [];
+        this.like = new Array();
+        this.dislike = new Array();
 
     }
 };
@@ -300,9 +300,10 @@ challengeContract.prototype = {
         return "0";
     },
 
-    PostChallenge: function(challengeId, challengeLevel, challenge, timeEstimation){
+    PostChallenge: function(address, challengeId, challengeLevel, challenge, timeEstimation){
 
-        var from = Blockchain.transaction.from;
+        //var from = Blockchain.transaction.from;
+        var from = address;
 
         var challengeItem = new ChallengeContent();
 
@@ -320,10 +321,11 @@ challengeContract.prototype = {
         return this.ChallengeValut.get(challengeId);
     },
 
-    AnswerChallenge: function(challengeId, answerId, answer){
+    AnswerChallenge: function(address,challengeId, answerId, answer){
 
-        var from = Blockchain.transaction.from;
+        //var from = Blockchain.transaction.from;
 
+        var from = address;
         var challengeItem = this.ChallengeValut.get(challengeId);
 
         var answerItem = new answerContent();
@@ -346,10 +348,11 @@ challengeContract.prototype = {
         return this.ChallengeValut.get(challengeId);
     },
 
-    VoteAnswer: function(challengeId,answerId,result){
+    VoteAnswer: function(address,challengeId,answerId,result){
 
-        var voter = Blockchain.transaction.from;
-        var choose = result.toString();
+        //var voter = Blockchain.transaction.from;
+        var voter = address;
+        var choose = result;
 
         var answerItem = this.ChallengeValut.get(challengeId).answer;
 
