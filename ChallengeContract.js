@@ -232,10 +232,13 @@ challengeContract.prototype = {
     },
 
     _poolTransfer: function (_to,_value) {
+        _value = new BigNumber(_value);
+
         if (this.reward < _value){
             throw new Error("Run out of Token")
         }
         var toBalance = this.balances.get(_to) || new BigNumber(0);
+
         this.balances.set(_to, toBalance.add(_value));
         //what's this??? sub from reward!.
         //this.balances = this.balances.sub(_value);
@@ -402,7 +405,7 @@ challengeContract.prototype = {
     },
 
     //everyone  can call this func!!!!
-    tokenTansfer:function (_to, _value) {
+    _tokenTransfer:function (_to, _value) {
 
         if (_to === "")
         {
@@ -426,7 +429,7 @@ challengeContract.prototype = {
         var limit = Blockchain.block.blockHeight - challengeItem.blockHeight;
         var rewardAmount = new BigNumber(0);
 
-        answerItem.sort(this.ChallengeValut.sortLike);
+        answerItem.sort(this.sortLike);
 
         if (challengeItem.reward){
             throw new Error("Reward only once");
@@ -451,7 +454,8 @@ challengeContract.prototype = {
 
         }
         
-        if (true) {
+        //if (limit > this.blockLimit) {
+        if(true){
             if (challengeItem.challengeLevel === "Diamond") {
                 rewardAmount = this.Diamond;
             }
@@ -484,7 +488,7 @@ challengeContract.prototype = {
                 var to_1 = answerItem[j_1].answered;
                 //var from_1 = this._admin;
                 var amount_1 = Math.ceil(firstLevel/firstSize);
-                this.tokenTansfer(to_1,amount_1);
+                this._tokenTransfer(to_1,amount_1);
             }
 
             for (var j_2 = 0; j_2 < secondSize; j_2++){
@@ -492,7 +496,7 @@ challengeContract.prototype = {
                 var to_2 = answerItem[base_2].answered;
                 //var from_2 = this._admin;
                 var amount_2 = Math.ceil(secondLevel/secondSize);
-                this.tokenTansfer(to_2,amount_2);
+                this._tokenTransfer(to_2,amount_2);
             }
 
             for (var j_3 = 0; j_3 < thirdSize; j_3++) {
@@ -500,7 +504,7 @@ challengeContract.prototype = {
                 var to_3 = answerItem[base_3].answered;
                 //var from_3 = this._admin;
                 var amount_3 = Math.ceil(thirdLevel/thirdSize);
-                this.tokenTansfer(to_3,amount_3);
+                this._tokenTransfer(to_3,amount_3);
             }
 
 
@@ -516,18 +520,18 @@ challengeContract.prototype = {
                 for (var i = 0; i<answerItem[j_5].like.length;i++){
                     var like_to = answerItem[j_5].like[i];
                    // var like_from = this._admin;
-                    this._tokenTansfer(like_to,forthAmount);
+                    this._tokenTransfer(like_to,forthAmount);
                 }
 
                 for (var k =0; k<answerItem[j_5].dislike.length;k++) {
                     var dislike_to = answerItem[j_5].dislike[i];
                     //var dislike_from = this._admin;
-                    this._tokenTansfer(dislike_to,forthAmount);
+                    this._tokenTransfer(dislike_to,forthAmount);
                 }
 
             }
 
-            this.tokenTansfer(challengeItem.author,forthAmount);
+            this._tokenTransfer(challengeItem.author,forthAmount);
 
             challengeItem.reward = true;
             this.currentBlock = Blockchain.block.height;
