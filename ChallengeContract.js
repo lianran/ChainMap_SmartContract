@@ -463,7 +463,7 @@ challengeContract.prototype = {
             var firstLevel = Math.ceil(rewardAmount*0.25);
             var secondLevel = Math.ceil(rewardAmount*0.15);
             var thirdLevel = Math.ceil(rewardAmount*0.1);
-            var forthLevel = rewardAmount - firstLevel - secondLevel - thirdLevel - forthLevel;
+            var forthLevel = rewardAmount - firstLevel - secondLevel - thirdLevel;
             var answerAmount = new BigNumber(0);
             for (var j = 0; j < answerItem.length; j++ ){
                 var answerLimit = answerItem[j].blockHeight - challengeItem.blockHeight;
@@ -478,7 +478,7 @@ challengeContract.prototype = {
 
             for (var j_1 = 0; j_1 < firstSize; j_1++){
                 var to_1 = answerItem[j_1].answered;
-                var from_1 = this._admin;
+                //var from_1 = this._admin;
                 var amount_1 = Math.ceil(firstLevel/firstSize);
                 this._tokenTansfer(to_1,amount_1);
             }
@@ -486,21 +486,21 @@ challengeContract.prototype = {
             for (var j_2 = 0; j_2 < secondSize; j_2++){
                 var base_2 = j_2 + firstSize;
                 var to_2 = answerItem[base_2].answered;
-                var from_2 = this._admin;
+                //var from_2 = this._admin;
                 var amount_2 = Math.ceil(secondLevel/secondSize);
                 this._tokenTansfer(to_2,amount_2);
             }
 
-            for (var j_3 = 0; j_3<thirdSize; j_3++) {
+            for (var j_3 = 0; j_3 < thirdSize; j_3++) {
                 var base_3 = j_3+firstSize+secondSize;
                 var to_3 = answerItem[base_3].answered;
-                var from_3 = this._admin;
+                //var from_3 = this._admin;
                 var amount_3 = Math.ceil(thirdLevel/thirdSize);
                 this._tokenTansfer(to_3,amount_3);
             }
 
             var forthSize = new BigNumber(0);
-            for (var j_4 = 0;j<answerItem.length;j_4++){
+            for (var j_4 = 0;j_4<answerItem.length;j_4++){
                 forthSize = forthSize + answerItem[j].like.length + answerItem[j_4].dislike.length;
             }
             forthSize++;
@@ -510,13 +510,13 @@ challengeContract.prototype = {
 
                 for (var i = 0; i<answerItem[j_5].like.length;i++){
                     var like_to = answerItem[j_5].like[i];
-                    var like_from = this._admin;
+                   // var like_from = this._admin;
                     this._tokenTansfer(like_to,forthAmount);
                 }
 
                 for (var k =0; k<answerItem[j_5].dislike.length;k++) {
                     var dislike_to = answerItem[j_5].dislike[i];
-                    var dislike_from = this._admin;
+                    //var dislike_from = this._admin;
                     this._tokenTansfer(dislike_to,forthAmount);
                 }
 
