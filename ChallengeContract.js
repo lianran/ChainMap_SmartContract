@@ -112,7 +112,7 @@ var challengeContract = function () {
         Brozen: new  BigNumber(25),
         blockLimit: new BigNumber(10),
         currentBlock: new BigNumber(0),
-        changePoint: new BigNumber(20),
+        changePoint: new BigNumber(1051200),
         reward: new BigNumber(0)
     });
 
