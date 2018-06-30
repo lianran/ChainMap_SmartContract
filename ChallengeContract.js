@@ -535,6 +535,7 @@ challengeContract.prototype = {
 
             challengeItem.reward = true;
             this.currentBlock = Blockchain.block.height;
+            this.ChallengeValut.put(challengeId,challengeItem);
 
         }
         else {
