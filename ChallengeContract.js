@@ -307,7 +307,11 @@ challengeContract.prototype = {
 
     PostChallenge: function(address, challengeId, challengeLevel, challenge, timeEstimation){
 
-        //var from = Blockchain.transaction.from;
+        //check if the challenge  exsit
+        if (this.ChallengeValut.get(challengeId) !== null){
+            throw new Error("challenge exsited!");
+        }
+
         var from = address;
 
         var challengeItem = new ChallengeContent();
@@ -326,12 +330,24 @@ challengeContract.prototype = {
         return this.ChallengeValut.get(challengeId);
     },
 
+    //check the exsitence of answer
     AnswerChallenge: function(address,challengeId, answerId, answer){
 
         //var from = Blockchain.transaction.from;
 
         var from = address;
         var challengeItem = this.ChallengeValut.get(challengeId);
+
+        if (challengeItem === null) {
+            throw new Error("challenge not exsit!");
+        }
+
+        //check the exsitence of answer
+        for(var i = 0, answerLen = challengeItem.answer.length; i < answerLen; i++) {
+            if(challengeItem.answer[i].answerId === answerId){
+                throw new Error("answer exsited!")
+            }
+        }
 
         var answerItem = new answerContent();
 
@@ -360,9 +376,12 @@ challengeContract.prototype = {
         var choose = result;
 
         var challengeItem = this.ChallengeValut.get(challengeId);
+        if (challengeItem === null) {
+            throw new Error("challenge not exsit!");
+        }
         var answerItem = challengeItem.answer;
 
-        // check if the voter is here??? or maybe we can use different type for like and dislike, for example 'set' Not array?
+        var flag = false;
         for(var j = 0, length2 = answerItem.length; j < length2; j++){
 
             if (answerItem[j].answerId === answerId){
@@ -390,10 +409,13 @@ challengeContract.prototype = {
                     //challengeItem.answer = answerItem;
                     this.ChallengeValut.put(challengeId,challengeItem);
                 }
-
+                flag = true;
                 break;
             }
         }
+        if (!flag) {
+            throw new Error("Answer not exsit!");
+        } 
         return this.ChallengeValut.get(challengeId);
 
     },
