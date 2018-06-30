@@ -1,6 +1,6 @@
 'use strict';
 //Global define
-// var Diamond = new BigNumber(200);
+    // var Diamond = new BigNumber(200);
 // var Gold = new BigNumber(100);
 // var Silver = new BigNumber(50);
 // var Brozen = new  BigNumber(25);
@@ -147,7 +147,7 @@ challengeContract.prototype = {
         this._totalSupply = new BigNumber(10).pow(10).mul(new BigNumber(2));
         this.reward = Math.ceil(this._totalSupply/2);
         //this._admin = "n1WJaKuQ8vQ8AzoGBZfYH3GLGzULQ2WwJvp";
-        this._admin = "n1ZuhVMZPJGQ2dt26WT4LxzJMiU7xbjTv5Z";
+        this._admin = "n1WJaKuQ8vQ8AzoGBZfYH3GLGzULQ2WwJvp";
         this.balances.set(this._admin, this._totalSupply.sub(this.reward));
         this.transferEvent(true, this._admin, this._admin, this._totalSupply.sub(this.reward));
         this.Diamond = new BigNumber(200);
@@ -239,7 +239,7 @@ challengeContract.prototype = {
         this.balances.set(_to, toBalance.add(_value));
         //what's this??? sub from reward!.
         //this.balances = this.balances.sub(_value);
-        this.reward = this.reward.sub(_value);
+        this.reward = this.reward-_value;
 
     },
 
@@ -381,7 +381,7 @@ challengeContract.prototype = {
                     this.ChallengeValut.put(challengeId,challengeItem);
                 }
                 else {
-                    answerItem[j].like.push(voter);
+                    answerItem[j].dislike.push(voter);
                     //challengeItem.answer = answerItem;
                     this.ChallengeValut.put(challengeId,challengeItem);
                 }
@@ -402,9 +402,13 @@ challengeContract.prototype = {
     },
 
     //everyone  can call this func!!!!
-    _tokenTansfer:function (_to, _value) {
+    tokenTansfer:function (_to, _value) {
 
-        this.ChallengeValut._poolTransfer(_to,_value);
+        if (_to === "")
+        {
+            throw new Error("")
+        }
+        this._poolTransfer(_to,_value);
 
         Event.Trigger("ChallengeValut", {
             Transfer: {
@@ -419,7 +423,7 @@ challengeContract.prototype = {
         var from = Blockchain.transaction.from;
         var challengeItem = this.ChallengeValut.get(challengeId);
         var answerItem = challengeItem.answer;
-        var limit = Blockchain.block.blockHeight.sub(challengeItem.blockHeight);
+        var limit = Blockchain.block.blockHeight - challengeItem.blockHeight;
         var rewardAmount = new BigNumber(0);
 
         answerItem.sort(this.ChallengeValut.sortLike);
@@ -447,7 +451,7 @@ challengeContract.prototype = {
 
         }
         
-        if (limit > blockLimit) {
+        if (true) {
             if (challengeItem.challengeLevel === "Diamond") {
                 rewardAmount = this.Diamond;
             }
@@ -480,7 +484,7 @@ challengeContract.prototype = {
                 var to_1 = answerItem[j_1].answered;
                 //var from_1 = this._admin;
                 var amount_1 = Math.ceil(firstLevel/firstSize);
-                this._tokenTansfer(to_1,amount_1);
+                this.tokenTansfer(to_1,amount_1);
             }
 
             for (var j_2 = 0; j_2 < secondSize; j_2++){
@@ -488,7 +492,7 @@ challengeContract.prototype = {
                 var to_2 = answerItem[base_2].answered;
                 //var from_2 = this._admin;
                 var amount_2 = Math.ceil(secondLevel/secondSize);
-                this._tokenTansfer(to_2,amount_2);
+                this.tokenTansfer(to_2,amount_2);
             }
 
             for (var j_3 = 0; j_3 < thirdSize; j_3++) {
@@ -496,12 +500,13 @@ challengeContract.prototype = {
                 var to_3 = answerItem[base_3].answered;
                 //var from_3 = this._admin;
                 var amount_3 = Math.ceil(thirdLevel/thirdSize);
-                this._tokenTansfer(to_3,amount_3);
+                this.tokenTansfer(to_3,amount_3);
             }
+
 
             var forthSize = new BigNumber(0);
             for (var j_4 = 0;j_4<answerItem.length;j_4++){
-                forthSize = forthSize + answerItem[j].like.length + answerItem[j_4].dislike.length;
+                forthSize = forthSize + answerItem[j_4].like.length + answerItem[j_4].dislike.length;
             }
             forthSize++;
             var forthAmount = Math.ceil(forthLevel/forthSize);
@@ -522,7 +527,7 @@ challengeContract.prototype = {
 
             }
 
-            this._tokenTansfer(challengeItem.author,forthAmount);
+            this.tokenTansfer(challengeItem.author,forthAmount);
 
             challengeItem.reward = true;
             this.currentBlock = Blockchain.block.height;
