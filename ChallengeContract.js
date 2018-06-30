@@ -438,7 +438,7 @@ challengeContract.prototype = {
             var multiple = Math.ceil((Blockchain.block.height - this.currentBlock)/this.changePoint);
             if (multiple !== 0)
             {
-                var base = 2*multiple;
+                var base = Math.pow(2,multiple);
                 this.Diamond = Math.ceil(this.Diamond/base);
                 this.Gold = Math.ceil(this.Gold/base);
                 this.Silver = Math.ceil(this.Silver/base);
