@@ -433,7 +433,8 @@ challengeContract.prototype = {
 
         if (_to === "")
         {
-            throw new Error("")
+            //if the _to address is null, retun directly
+            return ;
         }
         this._poolTransfer(_to,_value);
 
