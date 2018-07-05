@@ -316,9 +316,9 @@ challengeContract.prototype = {
 
         var challengeItem = new ChallengeContent();
 
-        challengeItem.challengeLevel = challengeLevel.toString();
-        challengeItem.challenge = challenge.toString();
-        challengeItem.timeEstimation = timeEstimation.toString();
+        challengeItem.challengeLevel = challengeLevel;
+        challengeItem.challenge = challenge;
+        challengeItem.timeEstimation = timeEstimation;
         challengeItem.author = from.toString();
         //challengeItem.timeStamp = new Date(); // Not right maybe
         challengeItem.timeStamp = Blockchain.block.timeStamp;
@@ -431,7 +431,7 @@ challengeContract.prototype = {
     //everyone  can call this func!!!!
     _tokenTransfer:function (_to, _value) {
 
-        if (_to === "")
+        if (Blockchain.verifyAddress(_to) === 0)
         {
             //if the _to address is null, retun directly
             return ;
